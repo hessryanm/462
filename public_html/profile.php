@@ -64,6 +64,7 @@ if ($authorized){
 <html>
 <head>
 	<title><?php if($view_own) echo "Your"; else echo $view_user."'s" ?> Profile</title>
+	<link rel="stylesheet" type="text/css" href="css/profile.css" />
 </head>
 <body>
 	<?php if ($view_own && !$authorized) { ?>
