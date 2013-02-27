@@ -40,12 +40,12 @@ if ($authorized){
 	foreach($response->items as $item){
 		$time = $item->createdAt;
 		$name = $item->venue->name;
-		$lat = $item->venue->lat;
-		$lng = $item->venue->lng;
-		$address = $item->venue->address;
-		$city = $item->venue->city;
-		$state = $item->venue->state;
-		$postal = $item->venue->postalCode;
+		$lat = $item->venue->location->lat;
+		$lng = $item->venue->location->lng;
+		$address = $item->venue->location->address;
+		$city = $item->venue->location->city;
+		$state = $item->venue->location->state;
+		$postal = $item->venue->location->postalCode;
 		
 		mysql_query("INSERT INTO checkins (user, time, name, lat, lng, address, city, state, postal) VALUES ('$view_user', '$time', '$name', '$lat', '$lng', '$address', '$city', '$state', '$postal')") or trigger_error("Can't Insert: ".mysql_error(), E_USER_WARNING);
 	}
