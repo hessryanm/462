@@ -67,6 +67,8 @@ if ($authorized){
 	<link rel="stylesheet" type="text/css" href="css/profile.css" />
 </head>
 <body>
+	<h1><?php echo $view_user; ?></h1>
+	<a href="/">Back to Home</a>
 	<?php if ($view_own && !$authorized) { ?>
 	<a href="/foursquare.php">Authorize Foursquare</a>
 	<?php } else if (!$view_own && !$authorized) { ?>
