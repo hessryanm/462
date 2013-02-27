@@ -8,7 +8,8 @@ if (isset($_SESSION['uname']) && $_SESSION['uname'] == $view_user) $view_own = t
 else $view_own = false;
 
 $auth_token_query = mysql_query("SELECT foursquare_token FROM users WHERE uname = '$view_user'");
-$auth_token = mysql_fetch_array($auth_token_query)[0];
+$auth_token = mysql_fetch_array($auth_token_query);
+$auth_token = $auth_token[0];
 if ($auth_token == 0) $authorized = false;
 else $authorized = true;
 
@@ -23,7 +24,8 @@ if ($authorized){
 	
 	$last_time = mysql_query("SELECT time FROM checkins WHERE uname = '$view_user' ORDER BY time DESC LIMIT 1");
 	if (mysql_num_rows($last_time) > 0){
-		$last_time = mysql_fetch_row($last_time)[0];
+		$last_time = mysql_fetch_row($last_time);
+		$last_time = $last_time[0];
 		$params['afterTimestamp'] = $last_time;
 	}
 	

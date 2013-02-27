@@ -3,7 +3,7 @@ session_start();
 require_once "mysql.php";
 
 $users_query = mysql_query("SELECT uname FROM users");
-$users = [];
+$users = array();
 while($user = mysql_fetch_array($users_query)){
 	array_push($users, $user[0]);
 }
