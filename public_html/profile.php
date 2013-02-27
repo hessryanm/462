@@ -27,7 +27,7 @@ if ($authorized){
 	
 	$params = array("sort" => "newestfirst");
 	
-	$last_time = mysql_query("SELECT time_added FROM checkins WHERE user = '$view_user' ORDER BY time DESC LIMIT 1") or trigger_error("can't select: ".mysql_error(), E_USER_WARNING);
+	$last_time = mysql_query("SELECT time_added FROM checkins WHERE user = '$view_user' ORDER BY time_added DESC LIMIT 1") or trigger_error("can't select: ".mysql_error(), E_USER_WARNING);
 	if (mysql_num_rows($last_time) > 0){
 		$last_time = mysql_fetch_row($last_time);
 		$last_time = strtotime($last_time[0]);
@@ -68,8 +68,61 @@ if ($authorized){
 <body>
 	<?php if ($view_own && !$authorized) { ?>
 	<a href="/foursquare.php">Authorize Foursquare</a>
-	<?php } else if ($view_own) { print_r($checkins); ?>
-	<!-- Authorized! -->
+	<?php } else if (!$view_own && !$authorized) { ?>
+	<h2><?php echo $view_user; ?> has not authorized foursquare for their account</h2>
+	<?php } else if ($view_own) { ?>
+	<table class="checkin">
+		<tr>
+			<th>
+				Location
+			</th>
+			<th>
+				Time
+			</th>
+			<th>
+				Address
+			</th>
+			<th>
+				Lat/Long
+			</th>
+			<th>
+				Map
+			</th>
+		</tr>
+	<?php foreach($checkins as $checkin){ ?>
+		<tr>
+			<td>
+				<?php echo $checkin['name']; ?>
+			</td>
+			<td>
+				<?php echo date("H:i:s m/d/y", $checkin['time']); ?>
+			</td>
+			<td>
+				<?php echo $checkin['address']."<br/>".$checkin['city'].", ".$checkin['state']." ".$checkin['postal']; ?>
+			</td>
+			<td>
+				<?php echo $checkin['lat']." / ".$checkin['lng']; ?>
+			</td>
+			<td>
+				<?php echo "<img src='http://maps.googleapis.com/maps/api/staticmap?zoom=12&size=300x300&maptype=roadmap&markers=color:red%7C".$checkin['lat'].",".$checkin['lng']."&sensor=false' alt='Map' />"; ?>
+			</td>
+		</tr>
+	<?php } ?>
+	</table>
+	<?php } else { ?>
+	<table>
+		<tr>
+			<td>
+				<?php echo $checkins[0]['name']; ?>
+			</td>
+			<td>
+				<?php echo date("H:i:s m/d/y", $checkin[0]['time']); ?>
+			</td>
+			<td>
+				<?php echo "<img src='http://maps.googleapis.com/maps/api/staticmap?zoom=12&size=300x300&maptype=roadmap&markers=color:red%7C".$checkin[0]['lat'].",".$checkin[0]['lng']."&sensor=false' alt='Map' />"; ?>
+			</td>
+		</tr>
+	</table>
 	<?php } ?>
 </body>
 </html>
