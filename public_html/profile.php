@@ -1,5 +1,8 @@
 <?php
+date_default_timezone_set("America/Denver");
 session_start();
+
+require_once("mysql.php");
 
 if (isset($_GET['uname'])) $view_user = $_GET['uname'];
 else header("Location: /");
@@ -7,11 +10,13 @@ else header("Location: /");
 if (isset($_SESSION['uname']) && $_SESSION['uname'] == $view_user) $view_own = true;
 else $view_own = false;
 
-$auth_token_query = mysql_query("SELECT foursquare_token FROM users WHERE uname = '$view_user'");
+$query_string="SELECT foursquare_token FROM users WHERE uname = '$view_user'";
+$auth_token_query = mysql_query($query_string) or die("cannot select: ".mysql_error());
 $auth_token = mysql_fetch_array($auth_token_query);
 $auth_token = $auth_token[0];
-if ($auth_token == 0) $authorized = false;
-else $authorized = true;
+
+$authorized = 1;
+if ($auth_token === 0) $authorized = 0;
 
 if ($authorized){
 	require_once("FoursquareAPI.class.php");
@@ -31,6 +36,7 @@ if ($authorized){
 	
 	$response = $foursquare->GetPrivate("users/self/checkins",$params);
 	$checkins = json_decode($response);
+	$checkins = $checkins->response->checkins;
 	print_r($checkins);
 }
 ?>
