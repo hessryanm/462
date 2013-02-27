@@ -5,6 +5,7 @@
 		die();
 	} 
 	require_once("FoursquareAPI.class.php");
+	require_once("mysql.php");
 	
 	// This file is intended to be used as your redirect_uri for the client on Foursquare
 	
@@ -25,7 +26,7 @@
 		header("Location: ".$foursquare->AuthenticationLink($redirect_uri));
 	} else{
 		$uname = $_SESSION['uname'];
-		$add_token_query = mysql_query("UPDATE users SET foursquare_token = '$token' WHERE uname = '$uname'");
+		$add_token_query = mysql_query("UPDATE users SET foursquare_token = '$token' WHERE uname = '$uname'") or die("cannot update".mysql_error());
 		header("Location: /profile.php?uname=".$uname);
 	}
 	

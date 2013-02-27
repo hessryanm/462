@@ -158,8 +158,10 @@ class FoursquareApi {
 		// Populate data for the GET request
 		if($type == HTTP_GET) $url = $this->MakeUrl($url,$params);
 
+
 		// borrowed from Andy Langton: http://andylangton.co.uk/
 		$ch = curl_init();
+	
 		curl_setopt($ch, CURLOPT_URL,$url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
 		if ( isset($_SERVER['HTTP_USER_AGENT']) ) {
@@ -170,6 +172,7 @@ class FoursquareApi {
 		}
 		curl_setopt($ch, CURLOPT_TIMEOUT, 30);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
 		$acceptLanguage[] = "Accept-Language:" . $this->ClientLanguage;
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $acceptLanguage); 
 		// Populate the data for POST
@@ -283,7 +286,6 @@ class FoursquareApi {
 						"code"=>$code);
 		$result = $this->GET($this->TokenUrl,$params);
 		$json = json_decode($result);
-		
 		// Petr Babicka Check if we get token
 		if (property_exists($json, 'access_token')) {
 			$this->SetAccessToken($json->access_token);
