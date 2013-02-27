@@ -1,0 +1,8 @@
+table.checkin td{
+	border:1px solid black;
+	padding:2px;
+}
+
+table.checkin{
+	border-collapse: collapse;
+}
