@@ -27,10 +27,10 @@ if ($authorized){
 	
 	$params = array("sort" => "newestfirst");
 	
-	$last_time = mysql_query("SELECT time FROM checkins WHERE uname = '$view_user' ORDER BY time DESC LIMIT 1");
+	$last_time = mysql_query("SELECT time_added FROM checkins WHERE user = '$view_user' ORDER BY time DESC LIMIT 1") or trigger_error("can't select: ".mysql_error(), E_USER_WARNING);
 	if (mysql_num_rows($last_time) > 0){
 		$last_time = mysql_fetch_row($last_time);
-		$last_time = $last_time[0];
+		$last_time = strtotime($last_time[0]);
 		$params['afterTimestamp'] = $last_time;
 	}
 	
@@ -50,10 +50,10 @@ if ($authorized){
 		mysql_query("INSERT INTO checkins (user, time, name, lat, lng, address, city, state, postal) VALUES ('$view_user', '$time', '$name', '$lat', '$lng', '$address', '$city', '$state', '$postal')") or trigger_error("Can't Insert: ".mysql_error(), E_USER_WARNING);
 	}
 	
-	if ($view_own) $query_string = "SELECT * FROM checkins WHERE uname = '$view_user' ORDER BY time DESC LIMIT 10";
-	else $query_string = "SELECT time, name, lat, lng FROM checkins WHERE uname = '$view_user' ORDER BY time DESC LIMIT 1";
+	if ($view_own) $query_string = "SELECT * FROM checkins WHERE user = '$view_user' ORDER BY time DESC LIMIT 10";
+	else $query_string = "SELECT time, name, lat, lng FROM checkins WHERE user = '$view_user' ORDER BY time DESC LIMIT 1";
 	
-	$checkins_query = mysql_query($query_string);
+	$checkins_query = mysql_query($query_string) or trigger_error("Can't Select: ".mysql_error(), E_USER_WARNING);
 	$checkins = array();
 	while($checkin = mysql_fetch_assoc($checkins_query)){
 		array_push($checkins, $checkin);
