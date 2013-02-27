@@ -23,10 +23,11 @@
 	
 	if(!isset($token)){ 
 		header("Location: ".$foursquare->AuthenticationLink($redirect_uri));
-	}else{
-		$uname = $_SESSION['uname'];
-		$add_token_query = mysql_query("UPDATE users SET foursquare_token = '$token' WHERE uname = '$uname'");
-		header("Location: /profile.php?uname=".$uname);
+	} else{
+		// $uname = $_SESSION['uname'];
+		// $add_token_query = mysql_query("UPDATE users SET foursquare_token = '$token' WHERE uname = '$uname'");
+		// header("Location: /profile.php?uname=".$uname);
+		echo $token;
 	}
 	
 ?>
