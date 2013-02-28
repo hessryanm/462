@@ -16,7 +16,7 @@ $auth_token = mysql_fetch_array($auth_token_query);
 $auth_token = $auth_token[0];
 
 $authorized = 1;
-if ($auth_token === 0) $authorized = 0;
+if ($auth_token === 0 || $auth_token === "0") $authorized = 0;
 
 if ($authorized){
 	require_once("FoursquareAPI.class.php");
@@ -70,7 +70,7 @@ if ($authorized){
 	<h1><?php echo $view_user; ?></h1>
 	<a href="/">Back to Home</a>
 	<?php if ($view_own && !$authorized) { ?>
-	<a href="/foursquare.php">Authorize Foursquare</a>
+	<p><a href="/foursquare.php">Authorize Foursquare</a></p>
 	<?php } else if (!$view_own && !$authorized) { ?>
 	<h2><?php echo $view_user; ?> has not authorized foursquare for their account</h2>
 	<?php } else if ($view_own) { ?>
@@ -119,10 +119,10 @@ if ($authorized){
 				<?php echo $checkins[0]['name']; ?>
 			</td>
 			<td>
-				<?php echo date("H:i:s m/d/y", $checkin[0]['time']); ?>
+				<?php echo date("H:i:s m/d/y", $checkins[0]['time']); ?>
 			</td>
 			<td>
-				<?php echo "<img src='http://maps.googleapis.com/maps/api/staticmap?zoom=12&size=300x300&maptype=roadmap&markers=color:red%7C".$checkin[0]['lat'].",".$checkin[0]['lng']."&sensor=false' alt='Map' />"; ?>
+				<?php echo "<img src='http://maps.googleapis.com/maps/api/staticmap?zoom=12&size=300x300&maptype=roadmap&markers=color:red%7C".$checkins[0]['lat'].",".$checkins[0]['lng']."&sensor=false' alt='Map' />"; ?>
 			</td>
 		</tr>
 	</table>

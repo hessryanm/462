@@ -10,6 +10,6 @@
 	vertical-align:middle;
 }
 
-.header a.header_link h2, .header a.header_link h4{
-	margin:0;
+.header a.header_link h2, .header a.header_link h4, .header a.header_link h3{
+	margin:0 0 0 10px;
 }
