@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (isset($_POST['uname']) && isset($_POST['pass'])){
-	require_once "mysql.php";
+	require_once("mysql.php");
 	$uname = mysql_real_escape_string($_POST['uname']);
 	$pass = md5($_POST['pass']);
 	$query = mysql_query("SELECT uname FROM users WHERE uname = '$uname' AND pass = '$pass' LIMIT 1");
@@ -9,7 +9,7 @@ if (isset($_POST['uname']) && isset($_POST['pass'])){
 	if(mysql_num_rows($query) > 0) {
 		$_SESSION['uname'] = $uname;
 		if (isset($_REQUEST['redirect'])) echo "<script type='text/javascript'>window.location.href='".$_REQUEST['redirect']."';</script>";
-		else echo "<script type='text/javascript'>window.location.href='/';</script>";
+		else echo "<script type='text/javascript'>window.location.href='/flower_shop';</script>";
 	}
 }
 
