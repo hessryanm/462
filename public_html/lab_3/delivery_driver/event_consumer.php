@@ -20,7 +20,7 @@ function send_bid($url, $delivery_id, $price, $time){
 	curl_close($ch);
 }
 
-public static function vincentyGreatCircleDistance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371000){
+function vincentyGreatCircleDistance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371000){
   // convert from degrees to radians
   $latFrom = deg2rad($latitudeFrom);
   $lonFrom = deg2rad($longitudeFrom);
