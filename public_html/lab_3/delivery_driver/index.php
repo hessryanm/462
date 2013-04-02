@@ -5,8 +5,8 @@ require_once("mysql.php");
 $uname = $_SESSION['uname'];
 $foursquare_query = mysql_query("SELECT * FROM foursquare WHERE uname = '$uname' LIMIT 1") or die("can't select from foursquare: ".mysql_error());
 $foursquare = mysql_fetch_array($foursquare_query);
-$authenticated = false;
-if ($foursquare['auth'] === 0 || $foursquare['auth'] === "0") $authenticated = false;
+$authenticated = 1;
+if ($foursquare['auth'] === 0 || $foursquare['auth'] === "0") $authenticated = 0;
 ?>
 <html>
 <head>
