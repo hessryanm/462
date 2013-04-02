@@ -26,7 +26,6 @@
 		header("Location: ".$foursquare->AuthenticationLink($redirect_uri));
 	} else{
 		$uname = $_SESSION['uname'];
-		mysql_query("UPDATE foursquare SET auth = '$token' WHERE uname = '$uname'") or die("cannot update".mysql_error());
 		
 		$user = new FoursquareAPI($client_key,$client_secret);
 		$user->SetAccessToken($token);
@@ -45,7 +44,7 @@
 		$name = mysql_real_escape_string($item->venue->name);
 		$lat = $item->venue->location->lat;
 		$lng = $item->venue->location->lng;
-		mysql_query("UPDATE foursquare SET lat = '$lat', lng = '$lng', time = '$time', name = '$name', foursquare_id = '$id' WHERE uname = '$uname'") or die("can't update foursquare: ".mysql_error());
+		mysql_query("UPDATE foursquare SET lat = '$lat', lng = '$lng', time = '$time', name = '$name', foursquare_id = '$id', auth = '$token' WHERE uname = '$uname'") or die("can't update foursquare: ".mysql_error());
 		header("Location: index.php");
 	}
 	
