@@ -1,0 +1,10 @@
+
+input.error{
+	border:1px solid red;
+}
+
+div.error{
+	font-weight:bold;
+	color:red;
+	font-style: italic;
+}

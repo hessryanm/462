@@ -7,6 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
 	$name = mysql_real_escape_string($_POST['name']);
 	$esl = mysql_real_escape_string($_POST['esl']);
 	mysql_query("UPDATE profile SET name = '$name', esl = '$esl' WHERE uname = '$uname'") or die(mysql_error());
+	echo "<script type='text/javascript'>alert('Changes Saved');</script>";
 }
 $user = mysql_query("SELECT * FROM profile WHERE uname = '$uname' LIMIT 1");
 $user = mysql_fetch_array($user);
