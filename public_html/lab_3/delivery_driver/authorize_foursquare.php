@@ -32,12 +32,12 @@
 		
 		$params = array("sort" => "newestfirst", "limit" => 1);
 		
-		$checkin_response = $foursquare->GetPrivate("users/self/checkins",$params);
-		$checkin_response = json_decode($checkin_response);
-		print_r($checkin_response);
+		// $checkin_response = $foursquare->GetPrivate("users/self/checkins",$params);
+		// $checkin_response = json_decode($checkin_response);
+		// print_r($checkin_response);
 		
-		$user_response = $foursquare->GetPrivate("users/self", array());
-		$user_response = json_decode($checkin_response);
+		$user_response = $foursquare->GetPrivate("users/self");
+		//$user_response = json_decode($checkin_response);
 		echo "<br/><br/>";
 		print_r($user_response);
 		//$response = $response->response->checkins;
