@@ -26,23 +26,27 @@
 		header("Location: ".$foursquare->AuthenticationLink($redirect_uri));
 	} else{
 		$uname = $_SESSION['uname'];
-		//$add_token_query = mysql_query("UPDATE foursquare SET auth = '$token' WHERE uname = '$uname'") or die("cannot update".mysql_error());
+		mysql_query("UPDATE foursquare SET auth = '$token' WHERE uname = '$uname'") or die("cannot update".mysql_error());
 		
 		$user = new FoursquareAPI($client_key,$client_secret);
 		$user->SetAccessToken($token);
 		$user_response = $user->GetPrivate("users/self");
 		$user_response = json_decode($user_response);
-		echo "ID: ".$user_response->response->user->id;
+		$id = $user_response->response->user->id;
 		
-		echo "<br/><br/>";
 		$checkin = new FoursquareAPI($client_key,$client_secret);
 		$checkin->SetAccessToken($token);
 		$params = array("sort" => "newestfirst", "limit" => 1);
 		$checkin_response = $checkin->GetPrivate("users/self/checkins",$params);
 		$checkin_response = json_decode($checkin_response);
 		$checkin_response = $checkin_response->response->checkins;
-		print_r($checkin_response->items);
-		//header("Location: index.php");
+		$item = $checkin_response->items[0];
+		$time = $item->createdAt;
+		$name = mysql_real_escape_string($item->venue->name);
+		$lat = $item->venue->location->lat;
+		$lng = $item->venue->location->lng;
+		mysql_query("UPDATE foursquare SET lat = '$lat', lng = '$lng', time = '$time', name = '$name', foursquare_id = '$id' WHERE uname = '$uname'") or die("can't update foursquare: ".mysql_error());
+		header("Location: index.php");
 	}
 	
 ?>
