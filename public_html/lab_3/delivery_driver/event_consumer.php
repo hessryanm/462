@@ -50,7 +50,7 @@ if (isset($_REQUEST['_name']) && $_REQUEST['_name'] == "delivery_ready" && isset
 	
 	$driver_query = mysql_query("SELECT uname FROM users WHERE id = '$driver' LIMIT 1") or die("can't select driver: ".mysql_error());
 	$uname = mysql_fetch_row($driver_query);
-	$uname = $uname[0]
+	$uname = $uname[0];
 	
 	$driver_loc_query = mysql_query("SELECT lat, lng FROM foursquare WHERE uname = '$uname' LIMIT 1") or die("can't select foursquare info: ".mysql_error());
 	$driver_loc = mysql_fetch_array($driver_loc_query);
