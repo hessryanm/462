@@ -3,7 +3,10 @@
 require_once("mysql.php");
 
 function send_bid($url, $delivery_id, $price, $time){
-	if (strpos($url, "http") === false) $url = "http://".$_SERVER['HTTP_HOST'].$url;
+	if (strpos($url, "http") === false){
+		if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == "on") $url = "https://".$_SERVER['HTTP_HOST'].$url;
+		else $url = "http://".$_SERVER['HTTP_HOST'].$url;
+	} 
 	$ch = curl_init($url);
 	$data = array("_name" => "bid_ready", "_domain" => "rfq", "delivery_id" => $delivery_id, "bid_amount" => $price, "delivery_time" => $time);
 	curl_setopt($ch, CURLOPT_POST, true);
