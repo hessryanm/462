@@ -26,7 +26,7 @@
 		header("Location: ".$foursquare->AuthenticationLink($redirect_uri));
 	} else{
 		$uname = $_SESSION['uname'];
-		$add_token_query = mysql_query("UPDATE foursquare SET auth = '$token' WHERE uname = '$uname'") or die("cannot update".mysql_error());
+		//$add_token_query = mysql_query("UPDATE foursquare SET auth = '$token' WHERE uname = '$uname'") or die("cannot update".mysql_error());
 		
 		$user = new FoursquareAPI($client_key,$client_secret);
 		$user->SetAccessToken($token);
@@ -40,7 +40,7 @@
 		$params = array("sort" => "newestfirst", "limit" => 1);
 		$checkin_response = $checkin->GetPrivate("users/self/checkins",$params);
 		$checkin_response = json_decode($checkin_response);
-		$checkin_response = $response->response->checkins;
+		$checkin_response = $checkin_response->response->checkins;
 		print_r($checkin_response->items);
 		//header("Location: index.php");
 	}
