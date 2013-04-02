@@ -32,9 +32,14 @@
 		
 		$params = array("sort" => "newestfirst", "limit" => 1);
 		
-		$response = $foursquare->GetPrivate("users/self/checkins",$params);
-		$response = json_decode($response);
-		print_r($response);
+		$checkin_response = $foursquare->GetPrivate("users/self/checkins",$params);
+		$checkin_response = json_decode($checkin_response);
+		print_r($checkin_response);
+		
+		$user_response = $foursquare->GetPrivate("users/self", array());
+		$user_response = json_decode($checkin_response);
+		echo "<br/><br/>";
+		print_r($user_response);
 		//$response = $response->response->checkins;
 		//header("Location: index.php");
 	}
