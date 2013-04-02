@@ -12,6 +12,7 @@ function send_bid($url, $delivery_id, $price, $time){
 	curl_setopt($ch, CURLOPT_POST, true);
 	curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
 	
 	$result = curl_exec($ch);

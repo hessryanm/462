@@ -9,6 +9,7 @@ function send_delivery_ready($url, $id, $pickup_time, $delivery_time, $delivery_
 	curl_setopt($ch, CURLOPT_POST, true);
 	curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
 	$result = curl_exec($ch);
 	if ($result === false) echo curl_error($ch);
