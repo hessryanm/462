@@ -40,6 +40,19 @@ if (isset($_REQUEST['_name']) && $_REQUEST['_name'] == "delivery_ready" && isset
 
 	echo("Delivery Received");
 
+} else if(isset($_REQUEST['source']) && $_REQUEST['source'] == "foursquare"){
+	if($_REQUEST['secret'] != "YSCWQ1VWN10LHUSH31F422DB45XODZBCXH1FQ5UHUM5O3LYE" || !isset($_REQUEST['checkin'])) die();
+	$checkin = $_REQUEST['checkin'];
+	$checkin = json_decode($checkin);
+	$user_id = $checkin->user->id;
+	$time = $checkin->createdAt;
+	$name = mysql_real_escape_string($checkin->venue->name);
+	$lat = $checkin->venue->location->lat;
+	$lng = $checkin->venue->location->lng;
+	
+	mysql_query("UPDATE foursquare SET lat = '$lat', lng = '$lng', time = '$time', name = '$name' WHERE foursquare_id = '$user_id'") or die("can't update foursquare: ".mysql_error());
+	
+	die("Checkin Received");
 } else die("Invalid Event");
 
 
