@@ -2,7 +2,7 @@
 function send_delivery_ready($url, $id, $pickup_time, $delivery_time, $delivery_address){
 	if (strpos($url, "http") === false) $url = "http://".$_SERVER['HTTP_HOST'].$url;
 	$ch = curl_init($url);
-	$data = ["_name" => "delivery_ready", "_domain" => "rfq", "delivery_id" => $id, "pickup_time" => $pickup_time, "delivery_time" => $delivery_time, "delivery_address" => $delivery_address];
+	$data = array("_name" => "delivery_ready", "_domain" => "rfq", "delivery_id" => $id, "pickup_time" => $pickup_time, "delivery_time" => $delivery_time, "delivery_address" => $delivery_address);
 	curl_setopt($ch, CURLOPT_POST, true);
 	curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

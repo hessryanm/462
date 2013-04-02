@@ -5,7 +5,7 @@ require_once("mysql.php");
 function send_bid($url, $delivery_id, $price, $time){
 	if (strpos($url, "http") === false) $url = "http://".$_SERVER['HTTP_HOST'].$url;
 	$ch = curl_init($url);
-	$data = ["_name" => "bid_ready", "_domain" => "rfq", "delivery_id" => $delivery_id, "bid_amount" => $price, "delivery_time" => $time];
+	$data = array("_name" => "bid_ready", "_domain" => "rfq", "delivery_id" => $delivery_id, "bid_amount" => $price, "delivery_time" => $time);
 	curl_setopt($ch, CURLOPT_POST, true);
 	curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
