@@ -99,6 +99,7 @@ if (isset($_REQUEST['_name']) && $_REQUEST['_name'] == "delivery_ready" && isset
 } else if(isset($_REQUEST['source']) && $_REQUEST['source'] == "twilio"){
 	if (strpos($_REQUEST['From'], "+") == 0) $_REQUEST['From'] = substr($_REQUEST['From'], 1);
 	$_REQUEST['From'] = str_replace("-", "", $_REQUEST['From']);
+	if (strpos($_REQUEST['from'], "1") == 0) $_REQUEST['From'] = substr($_REQUEST['From'], 1);
 	$from = intval(trim($_REQUEST['From']));
 	$body = trim(strtolower($_REQUEST['Body']));
 	
@@ -108,6 +109,7 @@ if (isset($_REQUEST['_name']) && $_REQUEST['_name'] == "delivery_ready" && isset
 		$user_id = $user_id[0];
 		
 		$delivery_query = mysql_query("SELECT * FROM delivery WHERE driver_id = '$user_id' ORDER BY time_added DESC LIMIT 1") or die("Can't select delivery: ".mysql_error());
+		if (mysql_num_rows($delivery_query) == 0) die();
 		$delivery = mysql_fetch_array($delivery_query);
 		$shop_id = $delivery['flower_shop_id'];
 		
