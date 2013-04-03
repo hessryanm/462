@@ -45,7 +45,7 @@ if (isset($_REQUEST['_name']) && $_REQUEST['_name'] == "delivery_ready" && isset
 	$delivery_time = $_REQUEST['delivery_time'];
 	$delivery_address = $_REQUEST['delivery_address'];
 
-	$shop_query = mysql_query("SELECT lat, lng FROM flower_shop WHERE id = '$shop' LIMIT 1") or die("can't select flower shop: ".mysql_error());
+	$shop_query = mysql_query("SELECT lat, lng, name FROM flower_shop WHERE id = '$shop' LIMIT 1") or die("can't select flower shop: ".mysql_error());
 	$shop_info = mysql_fetch_array($shop_query);
 	
 	$driver_query = mysql_query("SELECT uname FROM users WHERE id = '$driver' LIMIT 1") or die("can't select driver: ".mysql_error());
@@ -59,6 +59,21 @@ if (isset($_REQUEST['_name']) && $_REQUEST['_name'] == "delivery_ready" && isset
 		$exists_query = mysql_query("SELECT * FROM delivery WHERE flower_shop_id = '$shop' AND driver_id = '$driver' AND delivery_id = '$delivery_id'") or die("can't see if exists: ".mysql_error());
 		if (mysql_num_rows($exists_query) > 0) mysql_query("UPDATE delivery SET pickup_time = '$pickup_time', delivery_time = '$delivery_time', delivery_address = '$delivery_address' WHERE flower_shop_id = '$shop' AND driver_id = '$driver' AND delivery_id = '$delivery_id'") or die("can't update: ".mysql_error());
 		else mysql_query("INSERT INTO delivery (flower_shop_id, driver_id, delivery_id, pickup_time, delivery_time, delivery_address) VALUES ('$shop', '$driver', '$delivery_id', '$pickup_time', '$delivery_time', '$delivery_address')") or die("can't insert: ".mysql_error());
+		
+		require_once("Services/Twilio.php");
+		$AccountSid = "AC16abe3540ad6bf17260a27ac7e8f9cfc";
+    	$AuthToken = "e70d34e6dc245344f74ad34a6fcece8d";
+    	
+    	$client = new Services_Twilio($AccountSid, $AuthToken);
+    	
+    	$number_query = mysql_query("SELECT phone_number FROM users WHERE id = '$driver' LIMIT 1") or die("can't select phone number: ".mysql_error());
+    	$number = mysql_fetch_row($number_query);
+    	$number = $number[0];
+    	
+    	if($number != 0){
+    		$sms_body = "Delivery from ".$shop_info['name'].". PT: ".date("H:i:s m/d", $pickup_time)."; DT: ".date("H:i:s m/d", $delivery_time)."; DA: ".$delivery_address;
+    		$sms = $client->account->sms_messages->create("801-921-4507", $number, $sms_body);
+    	}
 	} else{
 		$shop_esl_query = mysql_query("SELECT esl FROM flower_shop_esl WHERE driver_id = '$driver' AND shop_id= '$shop' LIMIT 1") or die("can't get esl: ".mysql_error());
 		$esl = mysql_fetch_row($shop_esl_query);
