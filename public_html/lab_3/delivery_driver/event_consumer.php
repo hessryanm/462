@@ -81,6 +81,11 @@ if (isset($_REQUEST['_name']) && $_REQUEST['_name'] == "delivery_ready" && isset
 	mysql_query("UPDATE foursquare SET lat = '$lat', lng = '$lng', time = '$time', name = '$name' WHERE foursquare_id = '$user_id'") or die("can't update foursquare: ".mysql_error());
 	
 	die("Checkin Received");
+} else if(isset($_REQUEST['source']) && $_REQUEST['source'] == "twilio"){
+	$from = $_REQUEST['From'];
+	$body = $_REQUEST['Body'];
+	
+	mysql_query("INSERT INTO twilio_message (`from`, `body`) VALUES ('$from', '$body')") or die("can't insert: ".mysql_error());
 } else die("Invalid Event");
 
 
