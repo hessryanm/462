@@ -97,8 +97,26 @@ if (isset($_REQUEST['_name']) && $_REQUEST['_name'] == "delivery_ready" && isset
 	
 	die("Checkin Received");
 } else if(isset($_REQUEST['source']) && $_REQUEST['source'] == "twilio"){
-	$from = $_REQUEST['From'];
-	$body = $_REQUEST['Body'];
+	if (strpos($_REQUEST['From'], "+") == 0) $_REQUEST['From'] = substr($_REQUEST['From'], 1);
+	$_REQUEST['From'] = str_replace("-", "", $_REQUEST['From']);
+	$from = intval(trim($_REQUEST['From']));
+	$body = trim(strtolower($_REQUEST['Body']));
+	
+	if($body == "bid anyway"){
+		$user_query = mysql_query("SELECT id FROM users WHERE phone_number = '$from' LIMIT 1") or die("can't select user: ".mysql_error());
+		$user_id = mysql_fetch_row($user_query);
+		$user_id = $user_id[0];
+		
+		$delivery_query = mysql_query("SELECT * FROM delivery WHERE driver_id = '$user_id' ORDER BY time_added DESC LIMIT 1") or die("Can't select delivery: ".mysql_error());
+		$delivery = mysql_fetch_array($delivery_query);
+		$shop_id = $delivery['flower_shop_id'];
+		
+		$esl_query = mysql_query("SELECT esl FROM flower_shop_esl WHERE driver_id = '$user_id' AND shop_id = '$shop_id' LIMIT 1") or die("can't select esl: ".mysql_error());
+		$esl = mysql_fetch_row($esl_query);
+		$esl = $esl[0];
+		
+		send_bid($esl, $delivery['delivery_id'], "5.00", $delivery['delivery_time']);
+	}
 	
 	mysql_query("INSERT INTO twilio_message (`from`, `body`) VALUES ('$from', '$body')") or die("can't insert: ".mysql_error());
 } else die("Invalid Event");
