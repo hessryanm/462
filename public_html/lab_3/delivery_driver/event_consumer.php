@@ -2,6 +2,10 @@
 
 require_once("mysql.php");
 
+require_once("Services/Twilio.php");
+$AccountSid = "AC16abe3540ad6bf17260a27ac7e8f9cfc";
+$AuthToken = "e70d34e6dc245344f74ad34a6fcece8d";
+
 function send_bid($url, $delivery_id, $price, $time){
 	if (strpos($url, "http") === false){
 		if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == "on") $url = "https://".$_SERVER['HTTP_HOST'].$url;
@@ -54,31 +58,32 @@ if (isset($_REQUEST['_name']) && $_REQUEST['_name'] == "delivery_ready" && isset
 	
 	$driver_loc_query = mysql_query("SELECT lat, lng FROM foursquare WHERE uname = '$uname' LIMIT 1") or die("can't select foursquare info: ".mysql_error());
 	$driver_loc = mysql_fetch_array($driver_loc_query);
+	
+	$client = new Services_Twilio($AccountSid, $AuthToken);
+    	
+	$number_query = mysql_query("SELECT phone_number FROM users WHERE id = '$driver' LIMIT 1") or die("can't select phone number: ".mysql_error());
+	$number = mysql_fetch_row($number_query);
+	$number = $number[0];
 
 	if ($driver_loc['lat'] == 0 || $driver_loc['lng'] == 0 || vincentyGreatCircleDistance($driver_loc['lat'], $driver_loc['lng'], $shop_info['lat'], $shop_info['lng']) > 1609.34){
 		$exists_query = mysql_query("SELECT * FROM delivery WHERE flower_shop_id = '$shop' AND driver_id = '$driver' AND delivery_id = '$delivery_id'") or die("can't see if exists: ".mysql_error());
 		if (mysql_num_rows($exists_query) > 0) mysql_query("UPDATE delivery SET pickup_time = '$pickup_time', delivery_time = '$delivery_time', delivery_address = '$delivery_address' WHERE flower_shop_id = '$shop' AND driver_id = '$driver' AND delivery_id = '$delivery_id'") or die("can't update: ".mysql_error());
 		else mysql_query("INSERT INTO delivery (flower_shop_id, driver_id, delivery_id, pickup_time, delivery_time, delivery_address) VALUES ('$shop', '$driver', '$delivery_id', '$pickup_time', '$delivery_time', '$delivery_address')") or die("can't insert: ".mysql_error());
-		
-		require_once("Services/Twilio.php");
-		$AccountSid = "AC16abe3540ad6bf17260a27ac7e8f9cfc";
-    	$AuthToken = "e70d34e6dc245344f74ad34a6fcece8d";
     	
-    	$client = new Services_Twilio($AccountSid, $AuthToken);
     	
-    	$number_query = mysql_query("SELECT phone_number FROM users WHERE id = '$driver' LIMIT 1") or die("can't select phone number: ".mysql_error());
-    	$number = mysql_fetch_row($number_query);
-    	$number = $number[0];
-    	
-    	if($number != 0){
-    		$sms_body = "Delivery from ".$shop_info['name'].". PT: ".date("H:i:s m/d", $pickup_time)."; DT: ".date("H:i:s m/d", $delivery_time)."; DA: ".$delivery_address;
-    		$sms = $client->account->sms_messages->create("801-921-4507", $number, $sms_body);
-    	}
+    	$sms_body = "Delivery from ".$shop_info['name'].". PT: ".date("H:i:s m/d", $pickup_time)."; DT: ".date("H:i:s m/d", $delivery_time)."; DA: ".$delivery_address;
+    		
 	} else{
 		$shop_esl_query = mysql_query("SELECT esl FROM flower_shop_esl WHERE driver_id = '$driver' AND shop_id= '$shop' LIMIT 1") or die("can't get esl: ".mysql_error());
 		$esl = mysql_fetch_row($shop_esl_query);
 		$esl = $esl[0];
 		send_bid($esl, $delivery_id, "5.00", time() + (30*60));
+		
+		$sms_body = "Bid Sent to ".$shop_info['name'].". PT: ".date("H:i:s m/d", $pickup_time)."; DT: ".date("H:i:s m/d", $delivery_time)."; DA: ".$delivery_address;
+	}
+	
+	if($number != 0){
+		$sms = $client->account->sms_messages->create("801-921-4507", $number, $sms_body);
 	}
 
 	echo("Delivery Received");

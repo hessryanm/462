@@ -51,5 +51,32 @@ $user['id'] = $user_id[0];
 	</form>
 	Your ESL for this site is:<br/>
 	/lab_3/flower_shop/event_consumer.php?d=<?php echo $user['id']; ?>
+	<h2>Flower Shop Info</h2>
+	<table>
+		<tr>
+			<td>
+				Name:
+			</td>
+			<td>
+				Ryan's Flower Shop Extraordinaire
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Latitude:
+			</td>
+			<td>
+				40.3337
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Longitude:
+			</td>
+			<td>
+				-111.713
+			</td>
+		</tr>
+	</table>
 </body>
 </html>
