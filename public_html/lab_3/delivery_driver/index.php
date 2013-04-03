@@ -7,10 +7,16 @@ $foursquare_query = mysql_query("SELECT * FROM foursquare WHERE uname = '$uname'
 $foursquare = mysql_fetch_array($foursquare_query);
 $authenticated = 1;
 if ($foursquare['auth'] === 0 || $foursquare['auth'] === "0") $authenticated = 0;
+if (isset($_SESSION['uname'])) {
+	$pn_query = mysql_query("SELECT phone_number FROM users WHERE uname = '$uname' LIMIT 1") or die("can't get phone number: ".mysql_error());
+	$phone_number = mysql_fetch_row($pn_query);
+	$phone_number = $phone_number[0];
+}
 ?>
 <html>
 <head>
 	<title>Driver Site</title>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 </head>
 <body>
 
@@ -22,6 +28,10 @@ if ($foursquare['auth'] === 0 || $foursquare['auth'] === "0") $authenticated = 0
 <a href="/logout.php?redirect=lab_3/delivery_driver">Log Out</a><br/>
 <a href="shops.php">Flower Shops</a><br/>
 <?php if($authenticated){ ?>
+Phone Number: 
+<input type="text" id="phone_number" value="<?php echo $phone_number; ?>" name="number" />
+<input type="hidden" value="<?php echo $uname; ?>" id="uname" />
+<input id="save_number" type="button" value="Save" />
 <h3>Last Checkin:</h3>
 <table>
 	<tr>
@@ -37,4 +47,5 @@ if ($foursquare['auth'] === 0 || $foursquare['auth'] === "0") $authenticated = 0
 <a href="authorize_foursquare.php">Authorize Foursquare</a>
 <?php } ?>
 <?php } ?>
+<script src="js/index.js" type="text/javascript"></script>
 </body>
