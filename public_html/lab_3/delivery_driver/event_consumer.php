@@ -116,6 +116,9 @@ if (isset($_REQUEST['_name']) && $_REQUEST['_name'] == "delivery_ready" && isset
 		$esl = $esl[0];
 		
 		send_bid($esl, $delivery['delivery_id'], "5.00", $delivery['delivery_time']);
+		
+		$delivery_id = $delivery['id'];
+		mysql_query("DELETE FROM delivery WHERE id = '$delivery_id'") or die("Can't delete: ".mysql_error());
 	}
 	
 	mysql_query("INSERT INTO twilio_message (`from`, `body`) VALUES ('$from', '$body')") or die("can't insert: ".mysql_error());
