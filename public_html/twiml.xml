@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Response>
 <Redirect>
-	http://myserver.com/handlePostFlightSms
+	https://54.235.68.69/lab_3/delivery_driver/event_consumer.php?source=twilio
 </Redirect>
 </Response>
