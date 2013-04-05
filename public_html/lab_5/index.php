@@ -1,6 +1,13 @@
 
 <?php
 
+$con = mysql_connect("localhost", "root", "password") or die("can't connect: ".mysql_error());
+mysql_select_db("lab_5", $con) or die("can't select db: ".mysql_error());
+
+$request = mysql_real_escape_string(json_encode($_REQUEST));
+
+mysql_query("INSERT INTO request VALUES ('$request')");
+
 if (isset($_REQUEST["_domain"]) && $_REQUEST['_domain'] == "rft" && isset($_REQUEST['_name']) && $_REQUEST['_name'] == "tweet_request"){
 
 	if (!isset($_REQUEST['query'])) $query = '"test query"';
@@ -41,6 +48,10 @@ if (isset($_REQUEST["_domain"]) && $_REQUEST['_domain'] == "rft" && isset($_REQU
 
 	$result = curl_exec($ch);
 	if ($result === false) echo curl_error($ch);
+	else {
+		echo "<br/><br/>";
+		print_r(curl_getinfo($ch));
+	}
 	curl_close($ch);
 
 } else die("Invalid Request");
