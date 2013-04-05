@@ -41,13 +41,19 @@ if (isset($_REQUEST["_domain"]) && $_REQUEST['_domain'] == "rft" && isset($_REQU
 	
 	$ch = curl_init($_REQUEST['responseESL']);
 	$data = array("_name" => "tweets_found", "_domain" => "rft", "callbackNumber" => $_REQUEST['callbackNumber'], "results" => $response);
+	$json = json_encode($data);
 	
-	$record = json_encode($data);
+	$record = mysql_real_escape_string($json);
 	mysql_query("UPDATE request SET response = '$record' WHERE id = '$request_id'");
+	
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	curl_setopt($ch, CURLOPT_POST, true);
-	curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+	curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+       'Content-Type: application/json',
+       'Content-Length: ' . strlen($json))
+	);
 
 	$result = curl_exec($ch);
 	if ($result === false) echo curl_error($ch);
