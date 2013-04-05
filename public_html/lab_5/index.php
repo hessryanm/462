@@ -56,11 +56,12 @@ if (isset($_REQUEST["_domain"]) && $_REQUEST['_domain'] == "rft" && isset($_REQU
 	);
 
 	$result = curl_exec($ch);
-	if ($result === false) echo curl_error($ch);
-	else {
-		// echo "<br/><br/>";
-		// print_r(curl_getinfo($ch));
+	if ($result === false) {
+		$response = curl_error($ch);
+	} else {
+		$response = $result;
 	}
+	mysql_query("UPDATE request SET response_response = '$response' WHERE id = '$request_id'");
 	curl_close($ch);
 
 } else die("Invalid Request");
