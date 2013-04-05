@@ -8,6 +8,7 @@ $request = mysql_real_escape_string(json_encode($_REQUEST));
 $server = mysql_real_escape_string(json_encode($_SERVER));
 
 mysql_query("INSERT INTO request (request, server) VALUES ('$request', '$server')");
+$request_id = mysql_insert_id();
 
 if (isset($_REQUEST["_domain"]) && $_REQUEST['_domain'] == "rft" && isset($_REQUEST['_name']) && $_REQUEST['_name'] == "tweet_request"){
 
@@ -41,7 +42,7 @@ if (isset($_REQUEST["_domain"]) && $_REQUEST['_domain'] == "rft" && isset($_REQU
 	$ch = curl_init($_REQUEST['responseESL']);
 	$data = array("_name" => "tweets_found", "_domain" => "rft", "callbackNumber" => $_REQUEST['callbackNumber'], "results" => $response);
 	
-	// print_r($data);
+	mysql_query("INSERT INTO request (response) VALUES ('$data')");
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	curl_setopt($ch, CURLOPT_POST, true);
 	curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
