@@ -6,6 +6,9 @@ require_once("Services/Twilio.php");
 $AccountSid = "AC16abe3540ad6bf17260a27ac7e8f9cfc";
 $AuthToken = "e70d34e6dc245344f74ad34a6fcece8d";
 
+$request_json = mysql_real_escape_string(json_encode($_REQUEST));
+mysql_query("INSERT INTO request VALUES ('$request_json')");
+
 function send_bid($url, $delivery_id, $price, $time, $driver_id){
 	
 	$data = array("_name" => "bid_ready", "_domain" => "rfq", "delivery_id" => $delivery_id, "bid_amount" => $price, "delivery_time" => $time, "driver_id" => $driver_id);
@@ -70,7 +73,7 @@ if (isset($_REQUEST['_name']) && $_REQUEST['_name'] == "delivery_ready" && isset
 		
 		send_bid($shop_esl, $delivery_id, "5.00", time() + (30*60), $driver_id);
 		mysql_query("UPDATE delivery SET status = '1' WHERE id = '$driver_delivery_id'") or die("Can't update: ".mysql_error());
-		$sms_body = "Bid Sent to ".$shop_name."; Lat: ".$shop_lat."; Lng: ".$shop_lng.". PT: ".date("H:i:s m/d", $pickup_time)."; DT: ".date("H:i:s m/d", $delivery_time)."; DA: ".$delivery_address"; ID: ".$driver_delivery_id;
+		$sms_body = "Bid Sent to ".$shop_name."; Lat: ".$shop_lat."; Lng: ".$shop_lng.". PT: ".date("H:i:s m/d", $pickup_time)."; DT: ".date("H:i:s m/d", $delivery_time)."; DA: ".$delivery_address."; ID: ".$driver_delivery_id;
 	}
 	
 	if($number != 0){
@@ -79,7 +82,7 @@ if (isset($_REQUEST['_name']) && $_REQUEST['_name'] == "delivery_ready" && isset
 
 	echo("Delivery Received");
 
-if (isset($_REQUEST['_name']) && $_REQUEST['_name'] == "bid_awarded" && isset($_REQUEST['_domain']) && $_REQUEST['_domain'] == "rfq"){
+} else if (isset($_REQUEST['_name']) && $_REQUEST['_name'] == "bid_awarded" && isset($_REQUEST['_domain']) && $_REQUEST['_domain'] == "rfq"){
 
 	$user_id = $_REQUEST['d'];
 	$delivery_id = $_REQUEST['delivery_id'];
@@ -134,8 +137,9 @@ if (isset($_REQUEST['_name']) && $_REQUEST['_name'] == "bid_awarded" && isset($_
 		
 		mysql_query("UPDATE delivery SET status = '1' WHERE id = '$delivery_id'") or die("Can't update: ".mysql_error());
 		
-	} else if($body == "dont bid") mysql_query("DELETE FROM delivery WHERE id = '$delivery_id'") or die("can't delete: ".mysql_error());
-	else if (strpos($body, "complete") === 0){
+	} else if($body == "dont bid"){
+		mysql_query("DELETE FROM delivery WHERE id = '$delivery_id'") or die("can't delete: ".mysql_error());
+	} else if (strpos($body, "complete") === 0){
 		
 		$body_info = explode(" ", $body);
 		
@@ -143,7 +147,9 @@ if (isset($_REQUEST['_name']) && $_REQUEST['_name'] == "bid_awarded" && isset($_
 		if (is_numeric($last)) {
 			$driver_delivery_id = intval($last);
 			$delivery_query = mysql_query("SELECT id, delivery_id, shop_esl FROM delivery WHERE id = '$driver_delivery_id' LIMIT 1") or die("can't select delivery by id: ".mysql_error());
-		} else $delivery_query = mysql_query("SELECT id, delivery_id, shop_esl FROM delivery WHERE user_id = '$user_id' AND status = '2' ORDER BY time_added DESC LIMIT 1") or die("Can't select last delivery: ".mysql_error());
+		} else {
+			$delivery_query = mysql_query("SELECT id, delivery_id, shop_esl FROM delivery WHERE user_id = '$user_id' AND status = '2' ORDER BY time_added DESC LIMIT 1") or die("Can't select last delivery: ".mysql_error());
+		}
 		
 		$delivery = mysql_fetch_array($delivery_query);
 		$driver_delivery_id = $delivery['id'];
@@ -151,8 +157,6 @@ if (isset($_REQUEST['_name']) && $_REQUEST['_name'] == "bid_awarded" && isset($_
 		$data = array("_domain" => "delivery", "_name" => "complete", "delivery_id" => $delivery['delivery_id']);
 		send_event($delivery['shop_esl'], $data);
 	}
-	
-	// mysql_query("INSERT INTO twilio_message (`from`, `body`) VALUES ('$from', '$body')") or die("can't insert: ".mysql_error());
 } else die("Invalid Event");
 
 

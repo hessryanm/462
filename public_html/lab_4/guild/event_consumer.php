@@ -22,6 +22,9 @@ if (isset($_REQUEST['_name']) && $_REQUEST['_name'] == "delivery_ready" && isset
 	$driver_query = mysql_query("SELECT id, esl FROM users WHERE esl != '' ORDER BY ranking DESC LIMIT 3") or die("can't select top three drivers: ".mysql_error());
 	while($driver = mysql_fetch_assoc($driver_query)){
 		$data['driver_id'] = $driver['id'];
+		$esl = mysql_real_escape_string($driver['esl']);
+		$json_data = mysql_real_escape_string(json_encode($data));
+		mysql_query("INSERT INTO event_send (url, data) VALUES ('$esl', '$json_data')");
 		send_event($driver['esl'], $data);
 	}
 	
