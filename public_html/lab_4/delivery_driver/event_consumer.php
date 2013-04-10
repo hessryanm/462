@@ -129,26 +129,30 @@ if (isset($_REQUEST['_name']) && $_REQUEST['_name'] == "delivery_ready" && isset
 	$body = trim(strtolower($_REQUEST['Body']));
 	$body = str_replace("'", "", $body);
 	
-	$user_query = mysql_query("SELECT id FROM users WHERE phone_number = '$from' LIMIT 1") or die("can't select user: ".mysql_error());
+	$user_query = mysql_query("SELECT id FROM users WHERE phone_number = '$from' LIMIT 1") or save_error("can't select user: ".mysql_error());
 	$user_id = mysql_fetch_row($user_query);
 	$user_id = $user_id[0];
 	
-	$last_delivery_query = mysql_query("SELECT * FROM delivery WHERE user_id = '$user_id' AND status = '0' ORDER BY time_added DESC LIMIT 1") or die("Can't select last delivery: ".mysql_error());
-	if (mysql_num_rows($last_delivery_query) == 0) die();
-	$delivery = mysql_fetch_array($last_delivery_query);
-	$delivery_id = $delivery['id'];
-	
 	if($body == "bid anyway"){
-		save_error("1");
+		
+		$last_delivery_query = mysql_query("SELECT * FROM delivery WHERE user_id = '$user_id' AND status = '0' ORDER BY time_added DESC LIMIT 1") or save_error("Can't select last delivery: ".mysql_error());
+		if (mysql_num_rows($last_delivery_query) == 0) die();
+		$delivery = mysql_fetch_array($last_delivery_query);
+		$delivery_id = $delivery['id'];
+
 		send_bid($delivery['shop_esl'], $delivery['delivery_id'], "5.00", time() + (30 * 60), $delivery['driver_id']);
 		
 		mysql_query("UPDATE delivery SET status = '1' WHERE id = '$delivery_id'") or die("Can't update: ".mysql_error());
 		
 	} else if($body == "dont bid"){
-		save_error("2");
+		$last_delivery_query = mysql_query("SELECT * FROM delivery WHERE user_id = '$user_id' AND status = '0' ORDER BY time_added DESC LIMIT 1") or save_error("Can't select last delivery: ".mysql_error());
+		if (mysql_num_rows($last_delivery_query) == 0) die();
+		$delivery = mysql_fetch_array($last_delivery_query);
+		$delivery_id = $delivery['id'];
+		
 		mysql_query("DELETE FROM delivery WHERE id = '$delivery_id'") or die("can't delete: ".mysql_error());
 	} else {
-		save_error("3");
+
 		if(strpos($body, "complete") === 0){
 		
 		$body_info = explode(" ", $body);
@@ -156,9 +160,9 @@ if (isset($_REQUEST['_name']) && $_REQUEST['_name'] == "delivery_ready" && isset
 		$last = end($body_info);
 		if (is_numeric($last)) {
 			$driver_delivery_id = intval($last);
-			$delivery_query = mysql_query("SELECT id, delivery_id, shop_esl FROM delivery WHERE id = '$driver_delivery_id' LIMIT 1") or die("can't select delivery by id: ".mysql_error());
+			$delivery_query = mysql_query("SELECT id, delivery_id, shop_esl FROM delivery WHERE id = '$driver_delivery_id' LIMIT 1") or save_error("can't select delivery by id: ".mysql_error());
 		} else {
-			$delivery_query = mysql_query("SELECT id, delivery_id, shop_esl FROM delivery WHERE user_id = '$user_id' AND status = '2' ORDER BY time_added DESC LIMIT 1") or die("Can't select last delivery: ".mysql_error());
+			$delivery_query = mysql_query("SELECT id, delivery_id, shop_esl FROM delivery WHERE user_id = '$user_id' AND status = '2' ORDER BY time_added DESC LIMIT 1") or save_error("Can't select last delivery: ".mysql_error());
 		}
 		
 		$delivery = mysql_fetch_array($delivery_query);
