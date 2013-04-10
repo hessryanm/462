@@ -77,8 +77,6 @@ if (isset($_REQUEST['_name']) && $_REQUEST['_name'] == "delivery_ready" && isset
 	die("Update Received");
 } else if (isset($_REQUEST['_name']) && $_REQUEST['_name'] == "complete" && isset($_REQUEST['_domain']) && $_REQUEST['_domain'] == "delivery"){
 	
-	save_error("Here");
-	
 	$delivery_id = $_REQUEST['delivery_id'];
 	$shop_id = $_REQUEST['shop_id'];
 	$time = $_REQUEST['time'];
@@ -86,11 +84,15 @@ if (isset($_REQUEST['_name']) && $_REQUEST['_name'] == "delivery_ready" && isset
 	$delivery_query = mysql_query("SELECT id, delivery_time, driver_chosen FROM delivery WHERE shop_delivery_id = '$delivery_id' AND shop_id = '$shop_id' LIMIT 1") or save_error("can't get delivery: ".mysql_error());
 	$delivery = mysql_fetch_array($delivery_query);
 	
+	save_error(mysql_real_escape_string(json_encode($delivery)));
+	
 	if ($time <= $delivery['delivery_time']){
 		$rank_change = rand(1, 10);
 	} else{
 		$rank_change = rand(-10, -1);
 	}
+	
+	save_error("rank change: ".$rank_change);
 	
 	$driver_id = $delivery['driver_chosen'];
 	$driver_query = mysql_query("SELECT ranking FROM users WHERE id = '$driver_id' LIMIT 1") or save_error("Can't get driver: ".mysql_error());
