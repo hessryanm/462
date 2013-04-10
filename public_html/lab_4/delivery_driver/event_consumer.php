@@ -146,7 +146,9 @@ if (isset($_REQUEST['_name']) && $_REQUEST['_name'] == "delivery_ready" && isset
 		
 	} else if($body == "dont bid"){
 		mysql_query("DELETE FROM delivery WHERE id = '$delivery_id'") or die("can't delete: ".mysql_error());
-	} else if (strpos($body, "complete") === 0){
+	} else {
+		save_error("Here");
+		if(strpos($body, "complete") === 0){
 		
 		$body_info = explode(" ", $body);
 		
@@ -163,6 +165,7 @@ if (isset($_REQUEST['_name']) && $_REQUEST['_name'] == "delivery_ready" && isset
 		
 		$data = array("_domain" => "delivery", "_name" => "complete", "delivery_id" => $delivery['delivery_id']);
 		send_event($delivery['shop_esl'], $data);
+		}
 	}
 } else die("Invalid Event");
 
