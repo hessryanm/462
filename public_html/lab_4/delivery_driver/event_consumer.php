@@ -139,15 +139,16 @@ if (isset($_REQUEST['_name']) && $_REQUEST['_name'] == "delivery_ready" && isset
 	$delivery_id = $delivery['id'];
 	
 	if($body == "bid anyway"){
-		
+		save_error("1");
 		send_bid($delivery['shop_esl'], $delivery['delivery_id'], "5.00", time() + (30 * 60), $delivery['driver_id']);
 		
 		mysql_query("UPDATE delivery SET status = '1' WHERE id = '$delivery_id'") or die("Can't update: ".mysql_error());
 		
 	} else if($body == "dont bid"){
+		save_error("2");
 		mysql_query("DELETE FROM delivery WHERE id = '$delivery_id'") or die("can't delete: ".mysql_error());
 	} else {
-		save_error("Here");
+		save_error("3");
 		if(strpos($body, "complete") === 0){
 		
 		$body_info = explode(" ", $body);
