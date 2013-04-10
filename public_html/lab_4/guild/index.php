@@ -13,6 +13,7 @@ if (isset($_SESSION['uname'])){
 	}
 	
 	$user = mysql_query("SELECT * FROM users WHERE uname = '$uname' LIMIT 1") or die("Can't select user: ".mysql_error());
+	$user = mysql_fetch_array($user);
 }
 ?>
 <html>
