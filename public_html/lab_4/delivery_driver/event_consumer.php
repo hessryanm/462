@@ -6,9 +6,6 @@ require_once("Services/Twilio.php");
 $AccountSid = "AC16abe3540ad6bf17260a27ac7e8f9cfc";
 $AuthToken = "e70d34e6dc245344f74ad34a6fcece8d";
 
-$request_json = mysql_real_escape_string(json_encode($_REQUEST));
-mysql_query("INSERT INTO request VALUES ('$request_json')");
-
 function save_error($error){
 	$error = mysql_real_escape_string($error);
 	mysql_query("INSERT INTO error VALUES ('$error')");
