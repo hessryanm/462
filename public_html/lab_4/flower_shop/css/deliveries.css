@@ -1,0 +1,31 @@
+.deliveries{
+	border-collapse:collapse;
+}
+.deliveries tr{
+	border:1px solid black;
+}
+.deliveries tr td{
+	text-align:center;
+	border:none;
+	padding:auto 5px;
+}
+.deliveries tr th{
+	padding:0px 5px;
+}
+.popdown{
+	display:none;
+}
+.popdown table{
+	border:1px solid gray;
+	margin-left:25px;
+	border-collapse: collapse;
+}
+.popdown table td, .popdown table th{
+	border:1px dotted #AAA;
+}
+.popdown table tr{
+	border: 1px dotted #AAA;
+}
+.deliveries tr.delivery{
+	cursor:pointer;
+}

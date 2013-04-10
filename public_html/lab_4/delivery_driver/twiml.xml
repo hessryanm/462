@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+<Redirect>
+	https://54.235.68.69/lab_4/delivery_driver/event_consumer.php?source=twilio
+</Redirect>
+</Response>
