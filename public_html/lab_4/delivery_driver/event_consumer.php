@@ -142,7 +142,7 @@ if (isset($_REQUEST['_name']) && $_REQUEST['_name'] == "delivery_ready" && isset
 
 		send_bid($delivery['shop_esl'], $delivery['delivery_id'], "5.00", time() + (30 * 60), $delivery['driver_id']);
 		
-		mysql_query("UPDATE delivery SET status = '1' WHERE id = '$delivery_id'") or die("Can't update: ".mysql_error());
+		mysql_query("UPDATE delivery SET status = '1' WHERE id = '$delivery_id'") or save_error("Can't update: ".mysql_error());
 		
 	} else if($body == "dont bid"){
 		$last_delivery_query = mysql_query("SELECT * FROM delivery WHERE user_id = '$user_id' AND status = '0' ORDER BY time_added DESC LIMIT 1") or save_error("Can't select last delivery: ".mysql_error());
@@ -150,10 +150,10 @@ if (isset($_REQUEST['_name']) && $_REQUEST['_name'] == "delivery_ready" && isset
 		$delivery = mysql_fetch_array($last_delivery_query);
 		$delivery_id = $delivery['id'];
 		
-		mysql_query("DELETE FROM delivery WHERE id = '$delivery_id'") or die("can't delete: ".mysql_error());
-	} else {
-
-		if(strpos($body, "complete") === 0){
+		mysql_query("DELETE FROM delivery WHERE id = '$delivery_id'") or save_error("can't delete: ".mysql_error());
+	} else  if(strpos($body, "complete") === 0){
+		
+		save_error("Here");
 		
 		$body_info = explode(" ", $body);
 		
@@ -170,7 +170,6 @@ if (isset($_REQUEST['_name']) && $_REQUEST['_name'] == "delivery_ready" && isset
 		
 		$data = array("_domain" => "delivery", "_name" => "complete", "delivery_id" => $delivery['delivery_id']);
 		send_event($delivery['shop_esl'], $data);
-		}
 	}
 } else die("Invalid Event");
 
