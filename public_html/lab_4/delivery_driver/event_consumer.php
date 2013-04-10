@@ -1,7 +1,7 @@
 <?php
 
 require_once("mysql.php");
-require_once("/lab_4/send_event.php");
+require_once("../send_event.php");
 require_once("Services/Twilio.php");
 $AccountSid = "AC16abe3540ad6bf17260a27ac7e8f9cfc";
 $AuthToken = "e70d34e6dc245344f74ad34a6fcece8d";

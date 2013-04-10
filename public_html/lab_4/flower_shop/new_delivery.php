@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (!isset($_SESSION['uname'])) die("Login Required");
-require_once("/lab_4/send_event.php");
+require_once("../send_event.php");
 
 function send_delivery_ready($shop_lat, $shop_lng, $shop_name, $shop_id, $shop_esl, $delivery_id, $pickup_time, $delivery_time, $delivery_address){
 	global $guild_esl;
@@ -25,7 +25,9 @@ $shop_id = $shop['id'];
 
 mysql_query("INSERT INTO delivery (shop_id, pickup_time, delivery_time, delivery_address) VALUES ('$shop_id', '$pu_time', '$de_time', '$address')") or die("can't insert delivery: ".mysql_error());
 
-send_delivery_ready($shop['lat'], $shop['lng'], $shop['shop_name'], $shop['unique_id'], "/lab_4/flower_shop/event_consumer.php", mysql_insert_id(), $pu_time, $de_time, $address);
+$delivery_id = mysql_insert_id();
+
+send_delivery_ready($shop['lat'], $shop['lng'], $shop['shop_name'], $shop['unique_id'], "/lab_4/flower_shop/event_consumer.php", $delivery_id, $pu_time, $de_time, $address);
 
 die("Delivery Saved");
 ?>

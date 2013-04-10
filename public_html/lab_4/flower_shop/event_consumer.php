@@ -16,7 +16,7 @@ if (isset($_REQUEST['_name']) && $_REQUEST['_name'] == "bid_ready" && isset($_RE
 	die("Bid Received");
 } else if (isset($_REQUEST['_name']) && $_REQUEST['_name'] == "complete" && isset($_REQUEST['_domain']) && $_REQUEST['_domain'] == "delivery"){
 	$delivery_id = $_REQUEST['delivery_id'];
-	require_once("/lab_4/send_event.php");
+	require_once("../send_event.php");
 	
 	mysql_query("UPDATE delivery SET status = '4' WHERE id = '$delivery_id'") or die("can't update delivery: ".mysql_error());
 	

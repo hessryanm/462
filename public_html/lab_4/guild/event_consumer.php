@@ -1,7 +1,7 @@
 <?php
 
 require_once("mysql.php");
-require_once("/lab_4/send_event.php");
+require_once("../send_event.php");
 
 if (isset($_REQUEST['_name']) && $_REQUEST['_name'] == "delivery_ready" && isset($_REQUEST['_domain']) && $_REQUEST['_domain'] == "rfq"){
 	
