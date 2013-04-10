@@ -37,6 +37,8 @@ function vincentyGreatCircleDistance($latitudeFrom, $longitudeFrom, $latitudeTo,
   return $angle * $earthRadius;
 }
 
+$client = new Services_Twilio($AccountSid, $AuthToken);
+
 if (isset($_REQUEST['_name']) && $_REQUEST['_name'] == "delivery_ready" && isset($_REQUEST['_domain']) && $_REQUEST['_domain'] == "rfq"){
 
 	//	$data = array("_name" => "delivery_ready", "_domain" => "rfq", "delivery_id" => $delivery_id, "pickup_time" => $pickup_time, "delivery_time" => $delivery_time, "delivery_address" => $delivery_address, "shop_name" => $shop_name, "shop_lat" => $shop_lat, "shop_lng" => $shop_lng, "shop_esl" => $shop_esl, "shop_id" => $shop_id);
@@ -60,8 +62,6 @@ if (isset($_REQUEST['_name']) && $_REQUEST['_name'] == "delivery_ready" && isset
 	
 	$driver_loc_query = mysql_query("SELECT lat, lng FROM foursquare WHERE uname = '$uname' LIMIT 1") or die("can't select foursquare info: ".mysql_error());
 	$driver_loc = mysql_fetch_array($driver_loc_query);
-	
-	$client = new Services_Twilio($AccountSid, $AuthToken);
     	
 	$number_query = mysql_query("SELECT phone_number FROM users WHERE id = '$user' LIMIT 1") or die("can't select phone number: ".mysql_error());
 	$number = mysql_fetch_row($number_query);
