@@ -151,13 +151,12 @@ if (isset($_REQUEST['_name']) && $_REQUEST['_name'] == "delivery_ready" && isset
 		$delivery_id = $delivery['id'];
 		
 		mysql_query("DELETE FROM delivery WHERE id = '$delivery_id'") or save_error("can't delete: ".mysql_error());
-	} else  if(strpos($body, "complete") === 0){
-		
-		save_error("Here");
+	} else if(strpos($body, "complete") === 0){
 		
 		$body_info = explode(" ", $body);
 		
 		$last = end($body_info);
+		
 		if (is_numeric($last)) {
 			$driver_delivery_id = intval($last);
 			$delivery_query = mysql_query("SELECT id, delivery_id, shop_esl FROM delivery WHERE id = '$driver_delivery_id' LIMIT 1") or save_error("can't select delivery by id: ".mysql_error());
@@ -167,6 +166,8 @@ if (isset($_REQUEST['_name']) && $_REQUEST['_name'] == "delivery_ready" && isset
 		
 		$delivery = mysql_fetch_array($delivery_query);
 		$driver_delivery_id = $delivery['id'];
+		
+		mysql_query("UPDATE delivery SET status = '3' WHERE id = '$driver_delivery_id'") or save_error("Can't update status: ".mysql_error());
 		
 		$data = array("_domain" => "delivery", "_name" => "complete", "delivery_id" => $delivery['delivery_id']);
 		send_event($delivery['shop_esl'], $data);
