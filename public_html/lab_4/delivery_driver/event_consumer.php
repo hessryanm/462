@@ -9,6 +9,11 @@ $AuthToken = "e70d34e6dc245344f74ad34a6fcece8d";
 $request_json = mysql_real_escape_string(json_encode($_REQUEST));
 mysql_query("INSERT INTO request VALUES ('$request_json')");
 
+function save_error($error){
+	$error = mysql_real_escape_string($error);
+	mysql_query("INSERT INTO error VALUES ('$error')");
+}
+
 function send_bid($url, $delivery_id, $price, $time, $driver_id){
 	
 	$data = array("_name" => "bid_ready", "_domain" => "rfq", "delivery_id" => $delivery_id, "bid_amount" => $price, "delivery_time" => $time, "driver_id" => $driver_id);
@@ -83,23 +88,25 @@ if (isset($_REQUEST['_name']) && $_REQUEST['_name'] == "delivery_ready" && isset
 	echo("Delivery Received");
 
 } else if (isset($_REQUEST['_name']) && $_REQUEST['_name'] == "bid_awarded" && isset($_REQUEST['_domain']) && $_REQUEST['_domain'] == "rfq"){
+	
+	//{"d":"5","_domain":"rfq","_name":"bid_awarded","delivery_id":"41","shop_id":"hess_shop516457af0c106"}
 
 	$user_id = $_REQUEST['d'];
 	$delivery_id = $_REQUEST['delivery_id'];
 	$shop_id = $_REQUEST['shop_id'];
 	
-	$user_query = mysql_query("SELECT phone_number FROM users WHERE id = '$user_id' LIMIT 1") or die("Can't select phone number: ".mysql_error());
+	$user_query = mysql_query("SELECT phone_number FROM users WHERE id = '$user_id' LIMIT 1") or save_error("Can't select phone number: ".mysql_error());
 	$phone_number = mysql_fetch_row($user_query);
 	$phone_number = $phone_number[0];
 	
-	$delivery_query = mysql_query("SELECT id FROM delivery WHERE user_id = '$user_id' AND shop_id = '$shop_id' AND delivery_id = '$delivery_id' LIMIT 1") or die("can't get delivery id: ".mysql_error());
+	$delivery_query = mysql_query("SELECT id FROM delivery WHERE user_id = '$user_id' AND shop_id = '$shop_id' AND delivery_id = '$delivery_id' LIMIT 1") or save_error("can't get delivery id: ".mysql_error());
 	$driver_delivery_id = mysql_fetch_row($delivery_query);
 	$driver_delivery_id = $driver_delivery_id[0];
 	
 	$sms_body = "Bid Awarded: ".$driver_delivery_id;
 	$sms = $client->account->sms_messages->create("801-921-4507", $phone_number, $sms_body);
 	
-	mysql_query("UPDATE delivery SET status = '2' WHERE id = '$driver_delivery_id'") or die("can't update status: ".mysql_error());
+	mysql_query("UPDATE delivery SET status = '2' WHERE id = '$driver_delivery_id'") or save_error("can't update status: ".mysql_error());
 
 } else if(isset($_REQUEST['source']) && $_REQUEST['source'] == "foursquare"){
 	if($_REQUEST['secret'] != "YSCWQ1VWN10LHUSH31F422DB45XODZBCXH1FQ5UHUM5O3LYE" || !isset($_REQUEST['checkin'])) die();
