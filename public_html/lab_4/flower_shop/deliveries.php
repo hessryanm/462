@@ -2,11 +2,12 @@
 session_start();
 if (!isset($_SESSION['uname'])) header("Location: login.php?redirect=deliveries.php");
 
+require_once("mysql.php");
+
 $user_query = mysql_query("SELECT id FROM users WHERE uname = '{$_SESSION['uname']}' LIMIT 1") or die("can't select user: ".mysql_error());
 $user_id = mysql_fetch_row($user_query);
 $user_id = $user_id[0];
 
-require_once("mysql.php");
 $no_bids = array();
 $has_bids = array();
 $bid_selected = array();
