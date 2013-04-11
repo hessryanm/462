@@ -1,6 +1,11 @@
 <?php
 session_start();
 if (!isset($_SESSION['uname'])) header("Location: login.php?redirect=deliveries.php");
+
+$user_query = mysql_query("SELECT id FROM users WHERE uname = '{$_SESSION['uname']}' LIMIT 1") or die("can't select user: ".mysql_error());
+$user_id = mysql_fetch_row($user_query);
+$user_id = $user_id[0];
+
 require_once("mysql.php");
 $no_bids = array();
 $has_bids = array();
@@ -8,11 +13,11 @@ $bid_selected = array();
 $picked_up = array();
 $completed = array();
 
-$no_bids_query = mysql_query("SELECT * FROM delivery WHERE status = '0' ORDER BY delivery_time ASC") or die("can't get no bids: ".mysql_error());
-$has_bids_query = mysql_query("SELECT * FROM delivery WHERE status = '1' ORDER BY delivery_time ASC") or die("can't get has bids: ".mysql_error());
-$bid_selected_query = mysql_query("SELECT * FROM delivery WHERE status = '2' ORDER BY delivery_time ASC") or die("can't get bid selected: ".mysql_error());
-$picked_up_query = mysql_query("SELECT * FROM delivery WHERE status = '3' ORDER BY delivery_time ASC") or die("can't get picked up: ".mysql_error());
-$completed_query = mysql_query("SELECT * FROM delivery WHERE status = '4' ORDER BY delivery_time ASC") or die("can't get completed: ".mysql_error());
+$no_bids_query = mysql_query("SELECT * FROM delivery WHERE status = '0' AND shop_id = '$user_id' ORDER BY delivery_time ASC") or die("can't get no bids: ".mysql_error());
+$has_bids_query = mysql_query("SELECT * FROM delivery WHERE status = '1' AND shop_id = '$user_id' ORDER BY delivery_time ASC") or die("can't get has bids: ".mysql_error());
+$bid_selected_query = mysql_query("SELECT * FROM delivery WHERE status = '2' AND shop_id = '$user_id' ORDER BY delivery_time ASC") or die("can't get bid selected: ".mysql_error());
+$picked_up_query = mysql_query("SELECT * FROM delivery WHERE status = '3' AND shop_id = '$user_id' ORDER BY delivery_time ASC") or die("can't get picked up: ".mysql_error());
+$completed_query = mysql_query("SELECT * FROM delivery WHERE status = '4' AND shop_id = '$user_id' ORDER BY delivery_time ASC") or die("can't get completed: ".mysql_error());
 
 while($delivery = mysql_fetch_array($no_bids_query)) array_push($no_bids, $delivery);
 
